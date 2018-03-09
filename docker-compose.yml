@@ -1,0 +1,22 @@
+version: "2"
+
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    # volumes:
+      # - ${DB_DIRECTORY}:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
+  php:
+    build: docker/php7.2-apache
+    ports:
+      - 80:80
+    volumes:
+      - ${PROJECT_APP_PATH}:/var/www/html
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql:db
+    ports:
+      - 8080:80
