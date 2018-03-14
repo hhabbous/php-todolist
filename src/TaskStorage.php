@@ -1,6 +1,5 @@
 <?php
 
-
 namespace TODO;
 
 use PDO;
@@ -14,13 +13,10 @@ use TODO\Entity\Task;
 class TaskStorage implements TaskStorageInterface
 {
 
-    const NOT_STARTED = 1;
-
     /**
      * @var Database
      */
     private $db;
-
 
     /**
      * TaskStorage constructor.
@@ -38,7 +34,7 @@ class TaskStorage implements TaskStorageInterface
     public function add(Task $task): Task
     {
         $statement = $this->db->prepare("INSERT INTO task (name, id_status) VALUES(?,?); ");
-        $statement->execute([$task->getName(), self::NOT_STARTED]);
+        $statement->execute([$task->getName(), NOT_STARTED]);
 
         return $this->get($this->db->lastInsertId());
     }
@@ -47,20 +43,20 @@ class TaskStorage implements TaskStorageInterface
      * @param Task $task
      * @return mixed
      */
-    public function update(Task $task)
+    public function update(Task $task): void
     {
-        $statement = $this->db->prepare("UPDATE task SET  name=:name, status=:status WHERE id=:id;");
-        $statement->execute([$task->getName(), $task->setStatus(), $task->getId()]);
+        $statement = $this->db->prepare("UPDATE task SET  name= ?, id_status= ? WHERE id= ?;");
+        $statement->execute([$task->getName(), $task->getStatus()->getId(), $task->getId()]);
     }
 
     /**
-     * @param int $id
+     * @param array $ids
      * @return mixed
      */
-    public function delete(int $id)
+    public function delete(array $ids): void
     {
-        $statement = $this->db->prepare("DELETE FROM task WHERE id=?;");
-        $statement->execute([$id]);
+        $statement = $this->db->prepare("DELETE FROM task WHERE id IN ( " . implode(",", $ids) . ");");
+        $statement->execute();
     }
 
     /**
@@ -69,7 +65,7 @@ class TaskStorage implements TaskStorageInterface
      */
     public function get(int $id): Task
     {
-        $statement = $this->db->prepare("SELECT t.*, ts.label FROM task t, task_status ts WHERE t.id_status=ts.id AND t.id= ?;");
+        $statement = $this->db->prepare("SELECT t .*, ts.label FROM task t, task_status ts WHERE t . id_status = ts . id AND t . id = ?;");
         $statement->execute([$id]);
 
         return reset($statement->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Task::class));
@@ -81,7 +77,7 @@ class TaskStorage implements TaskStorageInterface
     public function all(): iterable
     {
         return $this->db
-            ->query("SELECT t.*, ts.label FROM task t, task_status ts WHERE t.id_status=ts.id;")
+            ->query("SELECT t .*, ts.label FROM task t, task_status ts WHERE t . id_status = ts . id ORDER BY t.created;")
             ->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, Task::class);
     }
 }

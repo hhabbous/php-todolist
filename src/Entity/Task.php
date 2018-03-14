@@ -16,6 +16,13 @@ class Task
      * @var
      */
     private $name;
+
+
+    /**
+     * @var
+     */
+    private $created;
+
     /**
      * @var
      */
@@ -77,6 +84,22 @@ class Task
         $this->name = $name;
     }
 
+
+    /**
+     * @return mixed
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param mixed $created
+     */
+    public function setCreated($created): void
+    {
+        $this->created = $created;
+    }
     /**
      * @return mixed
      */

@@ -30,7 +30,7 @@ class TaskManager implements TaskStorageInterface
      * @param Task $task
      * @return mixed
      */
-    public function add(Task $task)
+    public function add(Task $task): Task
     {
         return $this->taskStorage->add($task);
     }
@@ -45,12 +45,12 @@ class TaskManager implements TaskStorageInterface
     }
 
     /**
-     * @param int $id
+     * @param array $ids
      * @return mixed
      */
-    public function delete(int $id)
+    public function delete(array $ids)
     {
-        return $this->taskStorage->delete($id);
+        return $this->taskStorage->delete($ids);
     }
 
     /**

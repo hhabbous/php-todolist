@@ -15,7 +15,7 @@ interface TaskStorageInterface
      * @param Task $task
      * @return mixed
      */
-    public function add(Task $task);
+    public function add(Task $task): Task;
 
     /**
      * @param Task $task
@@ -24,10 +24,10 @@ interface TaskStorageInterface
     public function update(Task $task);
 
     /**
-     * @param int $id
+     * @param array $ids
      * @return mixed
      */
-    public function delete(int $id);
+    public function delete(array $ids);
 
     /**
      * @param int $id

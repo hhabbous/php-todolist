@@ -21,7 +21,6 @@ class TaskController
      */
     public function __construct()
     {
-
         $this->taskManager = new TaskManager();
     }
 
@@ -34,10 +33,12 @@ class TaskController
     }
 
 
-    public function add(string $name)
+    public function add()
     {
+        $param = $this->getPostParam();
+
         $task = new Task();
-        $task->setName(urldecode($name));
+        $task->setName(urldecode($param["name"]));
 
         $this->taskManager->add($task);
     }
@@ -49,12 +50,28 @@ class TaskController
         require ROOT . "/src/View/content.html.php";
     }
 
-    /**
-     * @param int $id
-     */
-    public function delete(int $id): void
+
+    public function delete(): void
     {
-        $this->taskManager->delete($id);
+        $param = $this->getPostParam();
+        $this->taskManager->delete($param["ids"]);
+    }
+
+
+    public function update(int $id): void
+    {
+        $param = $this->getPostParam();
+        $task = $this->taskManager->get($id);
+        $task->setName(urldecode($param["name"]));
+
+        $task->getStatus()->setId((($param["status"] === "true") ? COMPLETED : NOT_STARTED));
+        $this->taskManager->update($task);
+    }
+
+
+    private function getPostParam(): array
+    {
+        return $_POST;
     }
 
 }
